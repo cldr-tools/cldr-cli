@@ -30,6 +30,9 @@ Usage: cldr [options] [command]
 
 ```
 
+This command help to create json data about languages' locale and display name.
+Which could be used to generate language display names json file used in webpack.
+
 ```
 $ cldr lang -h
 
@@ -74,6 +77,8 @@ $ cldr lang zh,en
   ]
 }
 ```
+
+This command help to validate the locale to be used in your app if it's available for CLDR
 
 ```
 $ cldr available -h
