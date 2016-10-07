@@ -1,5 +1,7 @@
 # CLDR Tools CLI
 
+[![NPM](https://nodei.co/npm/cldr-cli.png)](https://npmjs.org/package/cldr-cli)
+
 command line tools for CLDR
 
 ## Getting Started
