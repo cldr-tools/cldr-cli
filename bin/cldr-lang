@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+var fs = require('fs')
+var path = require('path')
+var languageDisplayNames = require('cldr-tools/lib/display-names/languages')
+var jsome = require('jsome')
+var chalk = require('chalk')
+var logSymbols = require('log-symbols')
+
+var readConfig = require('../lib/read-config')
+
+program.
+    option('-o, --output <file>', 'output a json file').
+    arguments('[locales]').
+    description(
+        'output language display names specified by \n  ' +
+        '[locales] or exports.locales in cldr.conf.js').
+    parse(process.argv)
+
+run(program)
+
+
+
+
+/**
+ * run the program
+ *
+ * @param program
+ */
+function run (program){
+    var result,
+        locales = getLocales(program.args)
+
+    if(!locales){
+        program.help()
+    }
+
+    result = generateResult(locales)
+
+    prettyOutput(result)
+
+    if(program.output){
+        writeFile(program.output, result)
+    }
+}
+
+/**
+ * read locales from args or config file
+ * @param {String[]} args
+ * @returns {String[]}
+ */
+function getLocales (args){
+    var result = args && args[0]
+
+    if('string' === typeof result){
+        result = list(result)
+    } else {
+        try{
+            result = readConfig().locales
+        } catch(e){
+            console.log(logSymbols.error, 'no [locales] provided nor found config file')
+            console.log(e)
+        }
+    }
+
+    return result
+}
+
+/**
+ * generate all locales language display names json result
+ *
+ * @param locales
+ * @returns {{}}
+ */
+function generateResult (locales){
+    var result = {}
+
+    locales.forEach(function(locale) {
+        result[locale] = languageDisplayNames(locales, locale, true)
+    })
+
+    return result
+}
+
+/**
+ * parse the locales
+ *
+ * @param {String} value
+ * @returns {Array}
+ */
+function list (value){
+    return value.split(',')
+}
+
+/**
+ * write json result into file with success or error notice
+ *
+ * @param file
+ * @param content
+ */
+function writeFile (file, content){
+    fs.writeFile(
+        path.resolve(process.cwd(), program.output),
+        JSON.stringify(content, null, 2),
+        'utf-8',
+        function (err){
+            if(err){
+                console.log(logSymbols.error, 'output error', err)
+            } else {
+                console.log(logSymbols.success, chalk.green(`output to ${file} success`))
+            }
+        }
+    )
+}
+
+/**
+ * output colored json to console
+ *
+ * @param json
+ */
+function prettyOutput (json){
+    jsome.colors = {
+        'num'   : 'cyan'    // stands for numbers
+        , 'str'   : 'cyan' // stands for strings
+        , 'bool'  : 'cyan'     // stands for booleans
+        , 'regex' : 'white'    // stands for regular expressions
+        , 'undef' : 'white'    // stands for undefined
+        , 'null'  : 'white'    // stands for null
+        , 'attr'  : 'white'   // objects attributes -> { attr : value }
+        , 'quot'  : 'cyan'  // strings quotes -> "..."
+        , 'punc'  : 'white'  // commas seperating arrays and objects values -> [ , , , ]
+        , 'brack' : 'white'  // for both {} and []
+    }
+    jsome(json)
+}

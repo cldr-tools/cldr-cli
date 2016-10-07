@@ -1,0 +1,14 @@
+*.swp
+.sass-cache/
+mods/.sass-cache/
+.DS_Store
+.idea/
+zip/
+*.tmp
+*.bak
+tmp/
+temp/
+npm-debug.log
+*.log
+coverage
+cldr.conf.js

@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+var util = require('cldr-tools/lib/util')
+var chalk = require('chalk')
+var logSymbols = require('log-symbols')
+
+program.
+    arguments('<locales>').
+    description('output available language tags specified by <locales> zh,en,ja,ko for example').
+    parse(process.argv)
+
+run(program)
+
+function run (program){
+    var result
+    var locales = program.args[0]
+
+    if(locales){
+        result = locales.split(',').map(function(locale) {
+
+            var available = util.getAvailableLocale(locale)
+
+            if(available){
+                locale === available ?
+                    console.log(
+                        '    ',
+                        logSymbols.success,
+                        chalk.green(locale)) :
+                    console.log(
+                        '    ',
+                        logSymbols.success,
+                        locale,
+                        '=>',
+                        chalk.green(available)
+                    )
+            } else {
+                console.log(
+                    '    ',
+                    logSymbols.error,
+                    chalk.red(locale)
+                )
+            }
+            return available
+        })
+        console.log(
+            '\n    ',
+            chalk.green(result.filter(function(value) {
+                return !!value
+            }).join(', '))
+        )
+    } else {
+        program.help()
+    }
+}

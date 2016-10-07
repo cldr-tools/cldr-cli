@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+var program = require('commander')
+
+program.
+    version(require('../package.json').version).
+    command(
+        'lang [options] [locales]',
+        'output language display names specified by [locales] ' +
+        'or exports.locales in cldr.conf.js'
+    ).
+    command('available <locales>', 'output available language tags specified by <locales>').
+    parse(process.argv)
