@@ -20,7 +20,9 @@
   "author": "zincli <fly-lx@163.com>",
   "license": "MIT",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha"
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -34,6 +36,8 @@
     "commander": "^2.9.0",
     "findup": "^0.1.5",
     "jsome": "^2.3.25",
-    "log-symbols": "^1.0.2"
-  }
+    "log-symbols": "^1.0.2",
+    "snyk": "^1.192.3"
+  },
+  "snyk": true
 }
